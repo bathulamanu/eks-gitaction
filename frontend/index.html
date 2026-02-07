@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Name Store</title>
+
+<style>
+body {
+  background:red;
+  color:white;
+  text-align:center;
+  font-family:Arial;
+  margin-top:100px;
+}
+
+input,button {
+  padding:10px;
+  font-size:16px;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>Enter Name</h1>
+
+<input id="name" placeholder="Type name">
+<button onclick="save()">Save</button>
+
+<h2>Stored Names</h2>
+<ul id="list"></ul>
+
+<script>
+
+// ⭐ AUTO BACKEND DETECTION
+const API = window.location.hostname === "localhost"
+  ? "http://localhost:5000"
+  : "http://" + window.location.hostname + ":5000";
+
+function save(){
+  const name=document.getElementById("name").value;
+
+  fetch(API+"/save",{
+    method:"POST",
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({name})
+  }).then(()=> load());
+}
+
+function load(){
+  fetch(API+"/names")
+  .then(res=>res.json())
+  .then(data=>{
+    const list=document.getElementById("list");
+    list.innerHTML="";
+    data.forEach(x=>{
+      list.innerHTML+=`<li>${x.name}</li>`;
+    });
+  });
+}
+
+load();
+
+</script>
+
+</body>
+</html>
